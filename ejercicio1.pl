@@ -59,3 +59,46 @@ trabajoEn(enrique,hacienda).
 
 ambicioso(laura).
 trabajoEn(laura,cencosud).
+
+
+%Relaciones familiares
+madre(mona,homero).
+madre(jaqueline,marge).
+madre(marge,maggie).
+madre(marge,bart).
+madre(marge,lisa).
+padre(abraham,herbert).
+padre(abraham,homero).
+padre(ciancy,jaqueline).
+padre(homero,maggie).
+padre(homero,bart).
+padre(homero,lisa).
+
+%hermano(Hermano1,Hermano2).
+hijoDe(Hijo,Padre):-
+    padre(Padre,Hijo).
+hijoDe(Hijo,Padre):-
+    madre(Padre,Hijo).
+hermano(Hermano1,Hermano2):-
+    hijoDe(Hermano1,Padre),
+    hijoDe(Hermano2,Padre),
+    Hermano1 \= Hermano2.
+
+medioHermano(Hermano1,Hermano2):-
+    hermano(Hermano1,Hermano2),
+    padre(Padre1,Hermano1),
+    padre(Padre2,Hermano2),
+    \+ (madre(Madre1,Hermano1), madre(Madre1,Hermano2)).
+medioHermano(Hermano1,Hermano2):-
+    hermano(Hermano1,Hermano2),
+    madre(Madre1,Hermano1),
+    madre(Madre2,Hermano2),
+    \+ (padre(Padre1,Hermano1), padre(Padre1,Hermano2)).
+
+hijoUnico(Hijo):-
+    hijoDe(Hijo,Padre),
+    \+ hermano(Hijo,Otro).
+
+tio(Tio,Sobrino):-
+    hermano(Tio,Padre),
+    hijoDe(Sobrino,Padre).
