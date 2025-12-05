@@ -102,3 +102,32 @@ hijoUnico(Hijo):-
 tio(Tio,Sobrino):-
     hermano(Tio,Padre),
     hijoDe(Sobrino,Padre).
+
+
+%Transporte
+transporte(juan,camina).
+transporte(marcela,subte(a)).
+transporte(pepe,colectivo(160,d)).
+transporte(elena,colectivo(76)).
+transporte(maria,auto(500,fiat,2014)).
+transporte(ana,auto(fiesta,ford,2020)).
+transporte(roberto,auto(qubo,fiat,2015)).
+manejaLento(manuel).
+manejaLento(ana).
+
+%Se mueve en fiat
+vieneEnFiat(Persona):-
+    transporte(Persona,auto(Modelo,fiat,Year)).
+tardaMucho(Persona):-
+    transporte(Persona,camina).
+tardaMucho(Persona):-
+    manejaLento(Persona),
+    transporte(Persona,auto(Modelo,Marca,Year)).
+
+
+viajaEnColectivo(Persona):-
+    transporte(Persona,colectivo(Linea,Ramal)).
+viajaEnColectivo(Persona):-
+    transporte(Persona,colectivo(Linea)).
+personasEnColectivo(Personas):-
+    findall(Persona,viajaEnColectivo(Persona),Personas).
