@@ -3,8 +3,14 @@ joven(roque).
 trabajoEn(roque,acme).
 trabajoEn(ana,omni).
 trabajoEn(lucia,omni).
+%3.b va para ventar pero no contaduria
+trabajoEn(laura,cencosud).
+%3.a Va para proyecto no para logística
+trabajoEn(enrique,hacienda).
 honesto(roque).
 ingeniero(ana).
+%3.a Va para proyecto no para logística
+ingeniero(enrique). 
 habla(roque,frances).
 habla(ana,ingles).
 habla(lucia,ingles).
@@ -12,6 +18,8 @@ habla(lucia,frances).
 habla(cecilia,frances).
 abogado(cecilia).
 ambicioso(cecilia).
+%3.b va para ventar pero no contaduria
+ambicioso(laura).
 
 ambicioso(Persona) :-
     contador(Persona),
@@ -40,7 +48,7 @@ puedeAndar(ventas,lucia).
 
 %2. 
 puedeAndar(proyectos,Persona):-
-    ingeniero(Persona).
+    ingeniero(Persona),
     tieneExperiencia(Persona).
 puedeAndar(proyectos,Persona):-
     abogado(Persona),
@@ -51,15 +59,7 @@ puedeAndar(logistica,Persona):-
 requisitosLogistica(Persona):-
     joven(Persona).
 requisitosLogistica(Persona):-
-    trabajoEn(omni,Persona).
-
-%3.a Va para proyecto no para logística
-ingeniero(enrique). 
-trabajoEn(enrique,hacienda).
-
-ambicioso(laura).
-trabajoEn(laura,cencosud).
-
+    trabajoEn(Persona,omni).
 
 %Relaciones familiares
 madre(mona,homero).
@@ -75,29 +75,28 @@ padre(homero,bart).
 padre(homero,lisa).
 
 %hermano(Hermano1,Hermano2).
+hermano(Hermano1, Hermano2) :-
+    madre(Madre, Hermano1), madre(Madre, Hermano2),
+    padre(Padre, Hermano1), padre(Padre, Hermano2),
+    Hermano1 \= Hermano2.
+
+medioHermano(Hermano1,Hermano2):-
+    madre(Madre,Hermano1), madre(Madre,Hermano2),
+    padre(Padre1,Hermano1), padre(Padre2,Hermano2),
+    Padre1 \= Padre2.
+medioHermano(Hermano1,Hermano2):-
+    padre(Padre,Hermano1), padre(Padre,Hermano2),
+    madre(Madre1,Hermano1), madre(Madre2,Hermano2),
+    Madre1 \= Madre2.
+
 hijoDe(Hijo,Padre):-
     padre(Padre,Hijo).
 hijoDe(Hijo,Padre):-
     madre(Padre,Hijo).
-hermano(Hermano1,Hermano2):-
-    hijoDe(Hermano1,Padre),
-    hijoDe(Hermano2,Padre),
-    Hermano1 \= Hermano2.
-
-medioHermano(Hermano1,Hermano2):-
-    hermano(Hermano1,Hermano2),
-    padre(Padre1,Hermano1),
-    padre(Padre2,Hermano2),
-    \+ (madre(Madre1,Hermano1), madre(Madre1,Hermano2)).
-medioHermano(Hermano1,Hermano2):-
-    hermano(Hermano1,Hermano2),
-    madre(Madre1,Hermano1),
-    madre(Madre2,Hermano2),
-    \+ (padre(Padre1,Hermano1), padre(Padre1,Hermano2)).
 
 hijoUnico(Hijo):-
-    hijoDe(Hijo,Padre),
-    \+ hermano(Hijo,Otro).
+    hijoDe(Hijo,_),
+    \+ hermano(Hijo,_).
 
 tio(Tio,Sobrino):-
     hermano(Tio,Padre),
@@ -117,17 +116,23 @@ manejaLento(ana).
 
 %Se mueve en fiat
 vieneEnFiat(Persona):-
-    transporte(Persona,auto(Modelo,fiat,Year)).
+    transporte(Persona,auto(_,fiat,_)).
 tardaMucho(Persona):-
     transporte(Persona,camina).
 tardaMucho(Persona):-
     manejaLento(Persona),
-    transporte(Persona,auto(Modelo,Marca,Year)).
+    transporte(Persona,auto(_,_,_)).
 
 
+persona(Persona):-
+    transporte(Persona,_).
+persona(Persona):-
+    manejaLento(Persona).
 viajaEnColectivo(Persona):-
-    transporte(Persona,colectivo(Linea,Ramal)).
+    persona(Persona),
+    transporte(Persona,colectivo(_,_)).
 viajaEnColectivo(Persona):-
-    transporte(Persona,colectivo(Linea)).
+    persona(Persona),
+    transporte(Persona,colectivo(_)).
 personasEnColectivo(Personas):-
     findall(Persona,viajaEnColectivo(Persona),Personas).
